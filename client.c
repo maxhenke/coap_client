@@ -141,7 +141,22 @@ static void coapClient_work_task()
                 CoAP_HandleIncomingPacket(socketHandle, &pckt);
             }
         } while (res > 0);
-
+	
+	
+	// Ziel definieren
+        NetEp_t ziel;
+        ziel.NetType = IPV4;
+        NetAddr_IPv4_t ipv4;
+        ipv4.u8[0] = 127;
+        ipv4.u8[1] = 0;
+        ipv4.u8[2] = 0;
+        ipv4.u8[3] = 1;
+        NetAddr_t netaddr;
+        netaddr.IPv4 = ipv4;
+        ziel.NetAddr = netaddr;
+        ziel.NetPort = 5683;
+        // Leere ACK senden an Ziel
+	CoAP_SendEmptyAck(CoAP_GetNextMid(), socketHandle, ziel);
         CoAP_doWork();
 
     }
@@ -162,21 +177,6 @@ void main(void){
 
     CoAP_Init(api);
 
-
-    NetEp_t ziel;
-    ziel.NetType = IPV4;
-    NetAddr_IPv4_t ipv4;
-    ipv4.u8[0] = 127;
-    ipv4.u8[1] = 0;
-    ipv4.u8[2] = 0;
-    ipv4.u8[3] = 1;
-    NetAddr_t netaddr;
-    netaddr.IPv4 = ipv4;
-    ziel.NetAddr = netaddr;
-    ziel.NetPort = 5683;
-
-
-    sendCoapMessage();
 
     while(true)
     {
